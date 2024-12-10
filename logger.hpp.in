@@ -414,6 +414,15 @@ class ostream_sink_mt : public sink {
   ostream_sink_mt(std::ostream& stream, bool force_flush = false);
 };
 
+/**
+ * @brief A sink that writes nothing.
+ *
+ * See spdlog::sinks::null_sink_mt for more information.
+ */
+class null_sink_mt : public sink {
+ public:
+  null_sink_mt();
+};
 
 /**
  * @brief Returns the default log filename for the global logger.
