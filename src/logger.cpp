@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-#pragma once
+#include <logger.hpp>
 
-#include "../logger.hpp"
-
-// Include C headers for which we need symbols to be made public and don't want
-// the below symbol hiding pattern to apply.
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <unistd.h>
-
-// Start hiding before including spdlog headers.
-#pragma GCC visibility push(hidden)
+// TODO: Check if the below issue persists
 // This issue claims to have been resolved in gcc 8, but we still seem to encounter it here.
 // The code compiles and links and all tests pass, and nm shows symbols resolved as expected.
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80947
@@ -47,7 +38,7 @@
 #include <sstream>
 #include <string>
 
-namespace @_RAPIDS_LOGGER_NAMESPACE@ {
+namespace rapids_logger {
 
 namespace detail {
 namespace {
@@ -118,12 +109,15 @@ private:
 class logger_impl {
  public:
   logger_impl(std::string name) : underlying{spdlog::logger{name}} {
-    underlying.set_pattern(default_pattern());
-    auto const env_logging_level =
-      std::getenv("@_RAPIDS_LOGGER_MACRO_PREFIX@_DEFAULT_LOGGING_LEVEL");
-    if (env_logging_level != nullptr) { set_level(detail::string_to_level(env_logging_level)); }
-    auto const env_flush_level = std::getenv("@_RAPIDS_LOGGER_MACRO_PREFIX@_DEFAULT_FLUSH_LEVEL");
-    if (env_flush_level != nullptr) { flush_on(detail::string_to_level(env_flush_level)); }
+    // TODO: Every consuming library will need to set its own default levels and pattern
+    //underlying.set_pattern(default_pattern());
+    // when creating a default logger instance instead of setting the variables
+    // in CMake to generate this.
+    //auto const env_logging_level =
+    //  std::getenv("RAPIDS_LOGGER_DEFAULT_LOGGING_LEVEL");
+    //if (env_logging_level != nullptr) { set_level(detail::string_to_level(env_logging_level)); }
+    //auto const env_flush_level = std::getenv("@_RAPIDS_LOGGER_MACRO_PREFIX@_DEFAULT_FLUSH_LEVEL");
+    //if (env_flush_level != nullptr) { flush_on(detail::string_to_level(env_flush_level)); }
   }
 
   void log(level_enum lvl, std::string const& message) { underlying.log(to_spdlog_level(lvl), message); }
@@ -258,6 +252,4 @@ void logger::set_pattern(std::string pattern) { impl->set_pattern(pattern); }
 const logger::sink_vector& logger::sinks() const { return sinks_; }
 logger::sink_vector& logger::sinks() { return sinks_; }
 
-}  // namespace @_RAPIDS_LOGGER_NAMESPACE@
-// This visibility pragma must be here so that both our logger types and those coming from includes are hidden.
-#pragma GCC visibility pop
+}  // namespace rapids_logger
