@@ -73,11 +73,12 @@ if(RAPIDS_LOGGER_HIDE_ALL_SPDLOG_SYMBOLS)
   # order-dependent which is selected so we're at the mercy of the rapids-cmake implementation). We
   # should generalize the rapids_cpm_* functions to support this natively.aasdfsd
   include(${rapids-cmake-dir}/cpm/package_override.cmake)
-  rapids_cpm_package_override(cmake/spdlog_override.cmake)
+  rapids_cpm_package_override(${CMAKE_CURRENT_LIST_DIR}/cmake/spdlog_override.cmake)
   rapids_cpm_spdlog(
     FMT_OPTION ${RAPIDS_LOGGER_FMT_OPTION} CPM_ARGS OPTIONS "BUILD_SHARED_LIBS OFF"
                                            "SPDLOG_BUILD_SHARED OFF"
   )
+  set_target_properties(spdlog PROPERTIES CXX_VISIBILITY_PRESET hidden POSITION_INDEPENDENT_CODE ON)
   target_link_options(rapids_logger PRIVATE "LINKER:--exclude-libs,libspdlog")
 else()
   rapids_cpm_spdlog(
