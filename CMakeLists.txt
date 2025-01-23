@@ -21,10 +21,12 @@ include(rapids-cmake)
 include(rapids-cpm)
 include(rapids-export)
 
+file(READ "${CMAKE_CURRENT_LIST_DIR}/VERSION" _version)
+string(STRIP "${_version}" _version)
+
 project(
   RAPIDS_LOGGER
-  # TODO: Determine appropriate versioning.
-  VERSION 0.0.1
+  VERSION "${_version}"
   LANGUAGES CXX
 )
 
@@ -35,6 +37,7 @@ rapids_cpm_init()
 option(RAPIDS_LOGGER_HIDE_ALL_SPDLOG_SYMBOLS
        "Build and link to spdlog in a way that maximizes all symbol hiding" ON
 )
+option(BUILD_TESTS "Configure CMake to build tests" ON)
 
 include(CMakeDependentOption)
 # If we are hiding all spdlog symbols then we need to use the bundled fmt library, so this option
@@ -89,13 +92,20 @@ else()
 endif()
 target_link_libraries(rapids_logger PRIVATE spdlog::spdlog)
 
+if(BUILD_TESTS)
+  include(CTest)
+  add_subdirectory(tests)
+endif()
+
 rapids_cmake_install_lib_dir(lib_dir)
 install(
   TARGETS rapids_logger
   DESTINATION ${lib_dir}
   EXPORT rapids-logger-exports
 )
-install(DIRECTORY ${RAPIDS_LOGGER_SOURCE_DIR}/include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+install(DIRECTORY ${RAPIDS_LOGGER_SOURCE_DIR}/include/rapids_logger
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+)
 
 set(doc_string
     [=[
