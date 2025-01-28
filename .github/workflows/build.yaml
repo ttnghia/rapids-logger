@@ -1,0 +1,66 @@
+name: build
+
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - v[0-9][0-9].[0-9][0-9].[0-9][0-9]
+  workflow_dispatch:
+    inputs:
+      branch:
+        required: true
+        type: string
+      date:
+        required: true
+        type: string
+      sha:
+        required: true
+        type: string
+      build_type:
+        type: string
+        default: nightly
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  conda-cpp-build:
+    uses: rapidsai/shared-workflows/.github/workflows/conda-cpp-build.yaml@branch-25.02
+    with:
+      build_type: ${{ inputs.build_type || 'branch' }}
+      branch: ${{ inputs.branch }}
+      date: ${{ inputs.date }}
+      sha: ${{ inputs.sha }}
+      matrix_filter: group_by(.ARCH) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
+      script: ci/build_conda.sh
+  #upload-conda:
+  #  needs: conda-cpp-build
+  #  secrets: inherit
+  #  uses: rapidsai/shared-workflows/.github/workflows/conda-upload-packages.yaml@branch-25.02
+  #  with:
+  #    build_type: ${{ inputs.build_type || 'branch' }}
+  #    branch: ${{ inputs.branch }}
+  #    date: ${{ inputs.date }}
+  #    sha: ${{ inputs.sha }}
+  wheel-cpp-build:
+    uses: rapidsai/shared-workflows/.github/workflows/wheels-build.yaml@branch-25.02
+    with:
+      build_type: ${{ inputs.build_type || 'branch' }}
+      branch: ${{ inputs.branch }}
+      date: ${{ inputs.date }}
+      sha: ${{ inputs.sha }}
+      matrix_filter: group_by(.ARCH) | map(max_by([(.PY_VER|split(".")|map(tonumber)), (.CUDA_VER|split(".")|map(tonumber))]))
+      script: ci/build_wheel.sh
+  #wheel-publish-cpp:
+  #  needs: wheel-build-cpp
+  #  secrets: inherit
+  #  uses: rapidsai/shared-workflows/.github/workflows/wheels-publish.yaml@branch-25.02
+  #  with:
+  #    build_type: ${{ inputs.build_type || 'branch' }}
+  #    branch: ${{ inputs.branch }}
+  #    sha: ${{ inputs.sha }}
+  #    date: ${{ inputs.date }}
+  #    package-name: rapids_logger
+  #    package-type: cpp
