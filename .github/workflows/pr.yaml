@@ -1,7 +1,9 @@
 name: pr
 
 on:
-  push
+  push:
+    branches:
+      - "pull-request/[0-9]+"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
