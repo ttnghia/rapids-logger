@@ -21,6 +21,7 @@ include(rapids-export)
 
 file(READ "${CMAKE_CURRENT_LIST_DIR}/VERSION" _version)
 string(STRIP "${_version}" _version)
+string(REGEX MATCH "[0-9]+\.[0-9]+\.[0-9]+" _version "${_version}")
 
 project(
   RAPIDS_LOGGER

@@ -1,7 +1,7 @@
 # Copyright (c) 2025, NVIDIA CORPORATION.
 
 context:
-  version: 0.1.0
+  version: ${{ env.get("RAPIDS_PACKAGE_VERSION") | replace("v", "") }}
 
 package:
   name: rapids-logger

@@ -20,7 +20,8 @@ project(
   LANGUAGES CXX
 )
 
-find_package(rapids_logger 0.0.1 EXACT REQUIRED)
+# rapids_logger_version must be set by the calling file.
+find_package(rapids_logger ${rapids_logger_version} EXACT REQUIRED)
 
 add_executable(generate_logger_macros test.cpp)
 target_link_libraries(generate_logger_macros PUBLIC rapids_logger::rapids_logger)

@@ -16,6 +16,10 @@ cmake_minimum_required(VERSION 3.26.4 FATAL_ERROR)
 
 include(../../rapids_config.cmake)
 
+file(READ "${CMAKE_CURRENT_LIST_DIR}/rapids_logger/VERSION" _version)
+string(STRIP "${_version}" _version)
+string(REGEX MATCH "[0-9]+\.[0-9]+\.[0-9]+" _version "${_version}")
+
 project(
   rapids-logger-python
   VERSION "${RAPIDS_VERSION}"

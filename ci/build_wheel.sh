@@ -6,6 +6,10 @@ set -euo pipefail
 package_name="rapids_logger"
 package_dir="python/rapids-logger"
 
+source rapids-configure-sccache
+
+rapids-generate-version > ./VERSION
+
 rapids-logger "Building '${package_name}' wheel"
 sccache --zero-stats
 python -m pip wheel \

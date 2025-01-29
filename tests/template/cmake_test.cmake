@@ -53,6 +53,8 @@ function(add_cmake_test source_or_dir)
     NAME ${test_name}_configure
     COMMAND
       ${CMAKE_COMMAND} -S ${src_dir} -B ${build_dir}
+      # This function assumes _version is set in the calling file.
+      -Drapids_logger_version=${_version}
       # Hardcoding Ninja to simplify things. Assumes Ninja is available when running tests, which is
       # not a very onerous requirement.
       -G Ninja ${extra_args}
