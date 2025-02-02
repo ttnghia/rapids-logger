@@ -65,7 +65,6 @@ jobs:
       package-name: rapids_logger
       package-type: cpp
   static-build:
-    needs: style
     secrets: inherit
     uses: rapidsai/shared-workflows/.github/workflows/custom-job.yaml@branch-25.02
     with:
