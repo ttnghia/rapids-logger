@@ -92,6 +92,7 @@ else()
     BUILD_EXPORT_SET rapids-logger-exports
     INSTALL_EXPORT_SET rapids-logger-exports
   )
+  set_target_properties(spdlog PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 target_link_libraries(rapids_logger PRIVATE spdlog::spdlog)
 
