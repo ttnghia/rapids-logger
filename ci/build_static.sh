@@ -3,13 +3,22 @@
 
 set -euo pipefail
 
-source rapids-date-string
+. /opt/conda/etc/profile.d/conda.sh
+
+export CMAKE_GENERATOR=Ninja
 
 rapids-logger "Static cpp build"
 
-# Make sure we have an updated CMake
-python -m pip install -U cmake
-pyenv rehash
+ENV_YAML_DIR="$(mktemp -d)"
+ENV_FILE="${ENV_YAML_DIR}/env.yaml"
+rapids-dependency-file-generator --file-key test_static_library --output conda --matrix "" | tee "${ENV_FILE}"
+
+rapids-mamba-retry env create --yes -f "${ENV_FILE}" -n test
+
+# Temporarily allow unbound variables for conda activation.
+set +u
+conda activate test
+set -u
 
 cmake -S . -B build -DBUILD_SHARED_LIBS=OFF -DBUILD_TESTS=ON
 cmake --build build
