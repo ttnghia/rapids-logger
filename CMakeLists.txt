@@ -81,7 +81,7 @@ include(CMakeDependentOption)
 # We cannot hide all spdlog symbols if we are building a static library.
 cmake_dependent_option(
   RAPIDS_LOGGER_HIDE_ALL_SPDLOG_SYMBOLS
-  "Build and link to spdlog in a way that maximizes all symbol hiding" ON "BUILD_SHARED_LIBS" OFF
+  "Build and link to spdlog in a way that maximizes all symbol hiding" OFF
 )
 
 add_library(rapids_logger src/logger.cpp)
