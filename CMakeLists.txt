@@ -101,11 +101,13 @@ set_target_properties(
 
 # Get spdlog
 if(RAPIDS_LOGGER_HIDE_ALL_SPDLOG_SYMBOLS)
+  message(WARNING "Building spdlog : RAPIDS_LOGGER_HIDE_ALL_SPDLOG_SYMBOLS is ON")
   set(CPM_DOWNLOAD_spdlog ON)
-  get_spdlog(CPM_ARGS OPTIONS "BUILD_SHARED_LIBS OFF" "SPDLOG_BUILD_SHARED OFF")
+  get_spdlog(BUILD_EXPORT_SET rapids-logger-exports INSTALL_EXPORT_SET rapids-logger-exports CPM_ARGS OPTIONS "BUILD_SHARED_LIBS OFF" "SPDLOG_BUILD_SHARED OFF")
   set_target_properties(spdlog PROPERTIES POSITION_INDEPENDENT_CODE ON)
   target_link_options(rapids_logger PRIVATE "LINKER:--exclude-libs,libspdlog")
 else()
+  message(WARNING "Building spdlog : RAPIDS_LOGGER_HIDE_ALL_SPDLOG_SYMBOLS is OFF")
   get_spdlog(
     BUILD_EXPORT_SET rapids-logger-exports INSTALL_EXPORT_SET rapids-logger-exports CPM_ARGS
     OPTIONS "BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS}" "SPDLOG_BUILD_SHARED ${BUILD_SHARED_LIBS}"
