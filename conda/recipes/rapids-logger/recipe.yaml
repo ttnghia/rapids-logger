@@ -52,9 +52,11 @@ tests:
 
     files:
       source:
-        - tests/
-        - rapids_config.cmake
+        - RAPIDS_VERSION
         - VERSION
+        - cmake/
+        - rapids_config.cmake
+        - tests/
 
 about:
   homepage: https://rapids.ai/
