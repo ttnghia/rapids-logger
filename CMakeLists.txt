@@ -41,8 +41,10 @@ function(get_spdlog)
   endif()
 
   set(to_install OFF)
+  set(exclude_from_all ON)
   if(_RAPIDS_INSTALL_EXPORT_SET)
     set(to_install ON)
+    set(exclude_from_all OFF)
   endif()
 
   set(spdlog_version 1.14.1)
@@ -55,7 +57,7 @@ function(get_spdlog)
     GIT_REPOSITORY https://github.com/gabime/spdlog.git
     GIT_TAG "v${spdlog_version}"
     GIT_SHALLOW ON
-    EXCLUDE_FROM_ALL ON
+    EXCLUDE_FROM_ALL ${exclude_from_all}
     OPTIONS "SPDLOG_INSTALL ${to_install}" "SPDLOG_USE_STD_FORMAT ON"
   )
 endfunction()
